@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: fct_claims
+    description: "One row per claim segment, inpatient and outpatient stacked. Grain: claim_type + claim_id + segment."
+    columns:
+      - name: claim_sk
+        description: "Surrogate key: claim_type-claim_id-segment."
+        data_tests:
+          - unique
+          - not_null
+      - name: claim_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['inpatient', 'outpatient']
+      - name: member_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_member')
+                field: member_id
+
+  - name: dim_member
+    description: "One row per member. Demographics from the latest coverage year; a condition is true if flagged in any year."
+    columns:
+      - name: member_id
+        data_tests:
+          - unique
+          - not_null
+      - name: age_group
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Under 65', '65-74', '75-84', '85+']
+
+  - name: dim_provider
+    description: "One row per provider seen on claims. No provider reference file exists in SynPUF."
+    columns:
+      - name: provider_id
+        data_tests:
+          - unique
+          - not_null
