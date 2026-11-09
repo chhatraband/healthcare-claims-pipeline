@@ -1,0 +1,15 @@
+claims_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: athena
+      region_name: us-east-2
+      aws_profile_name: claims
+      work_group: primary
+      s3_staging_dir: s3://chhatraband-claims-pipeline/athena-results/
+      s3_data_dir: s3://chhatraband-claims-pipeline/dbt/
+      s3_data_naming: schema_table
+      database: awsdatacatalog
+      schema: claims
+      threads: 4
+      num_retries: 3

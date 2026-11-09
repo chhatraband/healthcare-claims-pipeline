@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: claims_raw
+    database: awsdatacatalog
+    schema: claims_raw
+    description: "CMS DE-SynPUF Sample 1, loaded as text by athena/create_raw_tables.py"
+    tables:
+      - name: raw_beneficiary
+        description: "One row per member per year (2008, 2009)"
+      - name: raw_inpatient
+        description: "Hospital stay claims, 2008-2010. Grain: clm_id + segment"
+      - name: raw_outpatient
+        description: "Outpatient claims, 2008-2010. Grain: clm_id + segment"

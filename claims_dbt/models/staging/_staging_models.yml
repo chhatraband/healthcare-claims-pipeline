@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: stg_beneficiary
+    description: "One row per member per coverage year (2008, 2009). Text converted to dates, numbers and true/false flags."
+    columns:
+      - name: member_year_key
+        description: "member_id + coverage_year. The grain of this model."
+        data_tests:
+          - unique
+          - not_null
+      - name: member_id
+        data_tests:
+          - not_null
+      - name: sex
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Male', 'Female']
+
+  - name: stg_inpatient_claims
+    description: "Hospital stay claims, typed. Grain: claim_id + segment."
+    columns:
+      - name: claim_key
+        description: "claim_id + segment. CLM_ID alone is not unique because long stays are split into segments."
+        data_tests:
+          - unique
+          - not_null
+      - name: member_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_beneficiary')
+                field: member_id
+              config:
+                severity: warn
+      - name: paid_amount
+        data_tests:
+          - not_null
+      - name: service_date
+        description: "First available of claim_from_date, claim_thru_date, admission_date, discharge_date. 68 claims had no from/thru date; admission or discharge date filled all of them."
+        data_tests:
+          - not_null
+
+  - name: stg_outpatient_claims
+    description: "Outpatient claims, typed. Grain: claim_id + segment."
+    columns:
+      - name: claim_key
+        description: "claim_id + segment."
+        data_tests:
+          - unique
+          - not_null
+      - name: member_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_beneficiary')
+                field: member_id
+              config:
+                severity: warn
+      - name: paid_amount
+        data_tests:
+          - not_null
+      - name: service_date
+        description: "claim_from_date, or claim_thru_date if missing. NULL when the source has no dates (11,253 claims at first load)."
+        data_tests:
+          - not_null:
+              config:
+                warn_if: ">0"
+                error_if: ">12000"
