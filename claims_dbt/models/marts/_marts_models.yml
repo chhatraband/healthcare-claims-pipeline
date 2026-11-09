@@ -42,3 +42,21 @@ models:
         data_tests:
           - unique
           - not_null
+  - name: fct_inpatient_stays
+    description: "One row per inpatient stay (all claim segments combined). Used for admissions, ALOS and 30-day readmissions."
+    columns:
+      - name: stay_id
+        data_tests:
+          - unique
+          - not_null
+      - name: admission_date
+        data_tests:
+          - not_null
+
+  - name: kpi_yearly_summary
+    description: "Payer KPIs per year: PMPM, admits per 1,000, ALOS, 30-day readmission rate. 2008-2009 only (years with member data)."
+    columns:
+      - name: year
+        data_tests:
+          - unique
+          - not_null        
