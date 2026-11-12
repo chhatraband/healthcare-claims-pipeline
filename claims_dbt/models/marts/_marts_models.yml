@@ -54,9 +54,25 @@ models:
           - not_null
 
   - name: kpi_yearly_summary
-    description: "Payer KPIs per year: PMPM, admits per 1,000, ALOS, 30-day readmission rate. 2008-2009 only (years with member data)."
+    description: "Payer KPIs per year: PMPM, admits per 1,000, ALOS, 30-day readmission rate. 2008-2009 only (years with member data). PMPM covers inpatient + outpatient facility claims only (no physician or drug claims). Caveat: the readmission rate slides from about 17% (early 2008) to about 5% (late 2009) while admissions stay flat; see analyses/readmission_by_month.sql. This is a property of the CMS synthetic data, not a pipeline error."
     columns:
       - name: year
         data_tests:
           - unique
-          - not_null        
+          - not_null  
+
+  - name: kpi_cost_by_condition
+    description: "PMPM for members with vs without each of 11 CMS chronic conditions, per year (2008-2009). Flags and costs come from the same year."
+    columns:
+      - name: kpi_key
+        data_tests:
+          - unique
+          - not_null
+
+  - name: kpi_cost_by_drg
+    description: "Inpatient stays and spend by DRG, 2008-2009, ranked by total paid. Stays without a DRG are excluded. Caveat: in CMS synthetic data, DRG codes are scrambled, so spend is nearly flat across DRGs (top 10 = about 5% of spend, about $14k per stay each). The model is correct; the ranking is not meaningful on SynPUF."   
+    columns:
+      - name: drg_code
+        data_tests:
+          - unique
+          - not_null                                   
