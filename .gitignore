@@ -7,3 +7,5 @@ dbt_packages/
 logs/
 .venv-dbt/
 airflow/logs/
+.venv-dash/
+

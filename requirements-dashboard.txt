@@ -1,0 +1,2 @@
+streamlit==1.67.0
+pyathena[pandas]==4.2.1
